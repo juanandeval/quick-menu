@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kids Planner PRO</title>
+    <title>Platos - Kids Planner</title>
     <style>
-        :root { --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6; --primary: #2c3e50; --accent: #8e44ad; --text: #333; }
+        :root { --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6; --primary: #2c3e50; --accent: #8e44ad; --text: #333; --light-gray: #e9ecef; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 14px; }
         
         header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .header-left { display: flex; align-items: center; gap: 8px; }
-        .menu-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .header-btns { display: flex; gap: 5px; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .app-title { font-weight: bold; font-size: 18px; margin: 0; }
+        .version-tag { font-size: 9px; opacity: 0.6; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; }
         
+        .header-btns { display: flex; gap: 5px; }
         .btn { border: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center; gap: 4px; }
         .btn-magic { background: var(--accent); }
         .btn-list { background: #16a085; }
@@ -23,6 +24,7 @@
 
         .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
+        /* SIDEBAR */
         .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 950; transition: transform 0.3s ease; }
         .sidebar-tabs { display: flex; border-bottom: 2px solid #eee; background: #fafafa; }
         .tab-btn { flex: 1; padding: 14px; border: none; background: none; font-weight: bold; color: #888; cursor: pointer; font-size: 11px; text-transform: uppercase; border-bottom: 3px solid transparent; }
@@ -31,14 +33,17 @@
         .repo-content { display: none; }
         .repo-content.active { display: block; }
         
-        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; background: #fff; }
+        /* BOTONES INVERTIDOS (Fondo gris, texto color) */
+        .drag-item { padding: 10px 12px; margin-bottom: 8px; border-radius: 10px; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; background: var(--light-gray); border: 1px solid #ddd; }
+        .alm-item { color: var(--alm-color); border-left: 5px solid var(--alm-color); }
+        .cena-item { color: var(--cena-color); border-left: 5px solid var(--cena-color); }
+        
+        .btn-icon { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); color: inherit; padding: 4px 7px; border-radius: 5px; font-size: 10px; cursor: pointer; }
+
+        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; }
         .btn-add-full { width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-        .drag-item { padding: 10px 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .alm-item { background: var(--alm-color); }
-        .cena-item { background: var(--cena-color); }
-        .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 4px 7px; border-radius: 5px; font-size: 10px; cursor: pointer; }
-
+        /* CALENDARIO */
         .month-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
         .week-container { background: white; border-radius: 14px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03); overflow: hidden; }
         .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 12px; border-bottom: 1px solid #eee; }
@@ -46,17 +51,22 @@
         .week-grid { display: flex; gap: 10px; padding: 15px; min-width: 850px; }
         .day-box { flex: 0 0 115px; display: flex; flex-direction: column; gap: 6px; }
         .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; text-transform: uppercase; }
-        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 50px; padding: 4px; position: relative; background: #fff; }
-        .slot::after { content: attr(data-label); position: absolute; bottom: 2px; right: 4px; font-size: 8px; color: #ced4da; }
-        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; cursor: pointer; }
+        
+        /* SLOTS CON TEXTO COMPLETO */
+        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 55px; padding: 4px; position: relative; background: #fff; }
+        .slot::after { content: attr(data-label); position: absolute; bottom: 3px; right: 5px; font-size: 9px; font-weight: 800; color: #dee2e6; letter-spacing: 0.5px; }
+        
+        /* PLATOS EN EL CALENDARIO (Invertidos también) */
+        .item-in-slot { padding: 6px; border-radius: 6px; font-size: 11px; text-align: center; font-weight: 700; margin-bottom: 3px; cursor: pointer; background: var(--light-gray); border: 1px solid rgba(0,0,0,0.1); }
+        .item-in-slot.alm-item { color: var(--alm-color); }
+        .item-in-slot.cena-item { color: var(--cena-color); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(2px); }
         .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; }
         
-        /* Contenedor de Código con botón de copiar */
         .copy-container { position: relative; background: #f4f4f4; border-radius: 10px; border: 1px solid #ddd; margin: 10px 0; overflow: hidden; }
         .copy-input { width: 100%; border: none; background: transparent; padding: 15px 45px 15px 15px; font-family: monospace; font-size: 12px; color: #555; box-sizing: border-box; }
-        .copy-btn-inner { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 5px; cursor: pointer; display: flex; align-items: center; }
+        .copy-btn-inner { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 5px; cursor: pointer; }
 
         @media (max-width: 850px) {
             .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; }
@@ -69,7 +79,11 @@
 <div id="welcome-toast">✅ Se han cargado platos por defecto. Edítalos, elimínalos o añade los tuyos.</div>
 
 <header>
-    <div class="header-left"><button class="menu-toggle" onclick="toggleSidebar()">☰</button></div>
+    <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 class="app-title">Platos</h1>
+        <span class="version-tag">v7.2</span>
+    </div>
     <div class="header-btns">
         <button class="btn btn-magic" onclick="autoFillMonth()">✨ Sugerir</button>
         <button class="btn btn-list" onclick="showShoppingList()">🛒 Lista</button>
@@ -98,8 +112,8 @@
 <div id="plateModal" class="modal"><div class="modal-content">
     <h3 id="modalTitle" style="margin-top:0">Configurar Plato</h3>
     <input type="hidden" id="mType"><input type="hidden" id="mIndex">
-    <input type="text" id="mName" placeholder="Nombre (ej: Crema Calabaza)" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-    <textarea id="mIng" placeholder="Ingredientes (ej: Calabaza, Quesitos)" style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+    <input type="text" id="mName" placeholder="Nombre (ej: Crema Calabaza)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+    <textarea id="mIng" placeholder="Ingredientes (ej: Calabaza, Quesitos)" style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
     <div style="display:flex; gap:10px; margin-top:10px;">
         <button class="btn" style="flex:1; background:var(--alm-color); padding:14px; font-size:14px;" onclick="savePlate()">Guardar</button>
         <button class="btn" style="flex:1; background:#95a5a6; padding:14px; font-size:14px;" onclick="closeModal('plateModal')">Cancelar</button>
@@ -109,13 +123,8 @@
 <div id="msgModal" class="modal"><div class="modal-content">
     <h3 id="msgTitle" style="margin-top:0">Título</h3>
     <p id="msgDesc" style="font-size: 12px; color: #666; margin-bottom:10px;"></p>
-    
-    <div id="msgTextContainer" class="copy-container">
-        <input id="msgInput" class="copy-input" readonly>
-        <button class="copy-btn-inner" onclick="copyFromInput()">📋</button>
-    </div>
+    <div id="msgTextContainer" class="copy-container"><input id="msgInput" class="copy-input" readonly><button class="copy-btn-inner" onclick="copyFromInput()">📋</button></div>
     <pre id="msgPre" style="display:none; background:#f4f4f4; padding:15px; border-radius:10px; font-size:13px; overflow-y: auto; max-height: 200px; white-space: pre-wrap; border:1px solid #ddd;"></pre>
-
     <button class="btn" style="width:100%; background:var(--primary); margin-top:15px; padding:14px; font-size:14px;" onclick="closeModal('msgModal')">Cerrar</button>
 </div></div>
 
@@ -136,14 +145,14 @@
         cena: [
             {n: "Tortilla de calabacín", i: "Huevos, Calabacín"},
             {n: "Sopa de estrellas", i: "Caldo, Pasta estrellas"},
-            {n: "Varitas de pescado caseras", i: "Pescado blanco, Pan rallado"},
+            {n: "Varitas de pescado", i: "Pescado blanco, Pan rallado"},
             {n: "Pizza de jamón y queso", i: "Masa pizza, Jamón York, Queso"},
             {n: "Hamburguesa de pollo", i: "Pechuga pollo, Pan burger"},
             {n: "Croquetas de jamón", i: "Leche, Harina, Jamón"},
             {n: "San Jacobo de lomo", i: "Lomo, Queso lonchas"},
             {n: "Quesadilla con tomate", i: "Tortilla trigo, Queso"},
             {n: "Crema de zanahoria", i: "Zanahoria, Quesitos"},
-            {n: "Revuelto de espárragos", i: "Huevos, Espárragos trigueros"}
+            {n: "Revuelto de espárragos", i: "Huevos, Espárragos"}
         ]
     };
 
@@ -153,9 +162,8 @@
 
     window.onload = () => {
         if(!localStorage.getItem('kp_repo_v7')) {
-            const toast = document.getElementById('welcome-toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 5000);
+            document.getElementById('welcome-toast').style.display = 'block';
+            setTimeout(() => document.getElementById('welcome-toast').style.display = 'none', 5000);
         }
         renderRepo();
         initMonth();
@@ -168,7 +176,7 @@
             let html = `<div class="week-container"><div class="week-header">SEMANA ${w}</div><div class="week-grid-wrapper"><div class="week-grid">`;
             for(let d=0; d<7; d++) {
                 html += `<div class="day-box"><div class="day-label">${['LUN','MAR','MIE','JUE','VIE','SAB','DOM'][d]}</div>
-                <div class="slot alm-slot" id="w${w}d${d}alm" data-label="ALM" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div>
+                <div class="slot alm-slot" id="w${w}d${d}alm" data-label="ALMUERZO" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div>
                 <div class="slot cena-slot" id="w${w}d${d}cena" data-label="CENA" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div></div>`;
             }
             view.insertAdjacentHTML('beforeend', html + `</div></div></div>`);
@@ -202,11 +210,7 @@
         autoSave();
     }
 
-    function clearSlot(slotId) {
-        document.getElementById(slotId).innerHTML = '';
-        delete calendarState[slotId];
-        autoSave();
-    }
+    function clearSlot(slotId) { document.getElementById(slotId).innerHTML = ''; delete calendarState[slotId]; autoSave(); }
 
     function loadCalendar() {
         for (let slotId in calendarState) {
@@ -289,28 +293,13 @@
     function showMsg(title, desc, text, isList) {
         document.getElementById('msgTitle').innerText = title;
         document.getElementById('msgDesc').innerText = desc;
-        const inputCont = document.getElementById('msgTextContainer');
-        const preCont = document.getElementById('msgPre');
-        
-        if(isList) {
-            inputCont.style.display = 'none';
-            preCont.style.display = 'block';
-            preCont.innerText = text;
-        } else {
-            inputCont.style.display = 'block';
-            preCont.style.display = 'none';
-            document.getElementById('msgInput').value = text;
-        }
+        const inputCont = document.getElementById('msgTextContainer'), preCont = document.getElementById('msgPre');
+        if(isList) { inputCont.style.display = 'none'; preCont.style.display = 'block'; preCont.innerText = text; }
+        else { inputCont.style.display = 'block'; preCont.style.display = 'none'; document.getElementById('msgInput').value = text; }
         document.getElementById('msgModal').style.display = 'flex';
     }
 
-    function copyFromInput() {
-        const input = document.getElementById('msgInput');
-        input.select();
-        document.execCommand('copy');
-        alert("¡Código copiado!");
-    }
-
+    function copyFromInput() { const input = document.getElementById('msgInput'); input.select(); document.execCommand('copy'); alert("¡Copiado!"); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 </script>
 </body>
