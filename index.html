@@ -28,7 +28,6 @@
 
         .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* SIDEBAR MEJORADO */
         .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 950; transition: transform 0.3s ease; }
         .sidebar-tabs { display: flex; border-bottom: 2px solid #eee; background: #fafafa; }
         .tab-btn { flex: 1; padding: 14px; border: none; background: none; font-weight: bold; color: #888; cursor: pointer; font-size: 11px; text-transform: uppercase; border-bottom: 3px solid transparent; }
@@ -38,25 +37,14 @@
         .repo-content { display: none; }
         .repo-content.active { display: block; }
 
-        /* FOOTER SIDEBAR CON BOTÓN + */
         .sidebar-footer { padding: 10px; border-top: 1px solid #eee; background: #fff; }
-        .btn-add-full { 
-            width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; 
-            font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .btn-add-full { width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        .drag-item { 
-            padding: 12px; margin-bottom: 8px; border-radius: 10px; color: white; 
-            font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .drag-item { padding: 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .alm-item { background: var(--alm-color); }
         .cena-item { background: var(--cena-color); }
-        
         .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 5px 9px; border-radius: 6px; font-size: 10px; }
 
-        /* CALENDARIO */
         .month-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
         .week-container { background: white; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; overflow: hidden; }
         .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 12px; color: var(--primary); border-bottom: 1px solid #eee; }
@@ -65,24 +53,26 @@
         .week-grid { display: flex; gap: 10px; padding: 15px; min-width: 850px; }
         
         .day-box { flex: 0 0 115px; display: flex; flex-direction: column; gap: 6px; }
-        .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
-        .weekend-label { color: #e67e22; }
-        
-        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 50px; padding: 4px; position: relative; background: #fff; transition: 0.2s; }
-        .slot::after { content: attr(data-label); position: absolute; bottom: 2px; right: 4px; font-size: 8px; color: #ced4da; font-weight: bold; }
-        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; text-transform: uppercase; }
+        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 50px; padding: 4px; position: relative; background: #fff; }
+        .slot::after { content: attr(data-label); position: absolute; bottom: 2px; right: 4px; font-size: 8px; color: #ced4da; }
+        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; }
+        
+        /* Banner de Notificación */
+        #welcome-toast { display: none; position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 20px; border-radius: 10px; font-size: 12px; z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; width: 80%; max-width: 300px; }
 
         @media (max-width: 850px) {
-            .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
+
+<div id="welcome-toast">✅ Se han cargado platos por defecto. ¡Puedes editarlos o añadir nuevos!</div>
 
 <header>
     <div class="header-left">
@@ -111,7 +101,6 @@
             </button>
         </div>
     </aside>
-
     <main class="month-view" id="month-view"></main>
 </div>
 
@@ -120,10 +109,10 @@
         <h3 id="modalTitle" style="margin-top:0">Configurar Plato</h3>
         <input type="hidden" id="mType"><input type="hidden" id="mIndex">
         <input type="text" id="mName" placeholder="Nombre del plato">
-        <textarea id="mIng" placeholder="Ingredientes (ej: Pasta, Tomate, Atún)"></textarea>
-        <div style="display:flex; gap:10px;">
-            <button class="btn" style="flex:1; background:var(--alm-color); padding:14px; font-size:14px" onclick="savePlate()">Guardar</button>
-            <button class="btn" style="flex:1; background:#95a5a6; padding:14px; font-size:14px" onclick="closeModal('plateModal')">Cerrar</button>
+        <textarea id="mIng" placeholder="Ingredientes (ej: Lentejas, Chorizo, Patata)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; height:80px;"></textarea>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn" style="flex:1; background:var(--alm-color); padding:14px;" onclick="savePlate()">Guardar</button>
+            <button class="btn" style="flex:1; background:#95a5a6; padding:14px;" onclick="closeModal('plateModal')">Cerrar</button>
         </div>
     </div>
 </div>
@@ -132,38 +121,66 @@
     <div class="modal-content">
         <h3>🛒 Lista de la Compra</h3>
         <pre id="listText" style="background:#f4f4f4; padding:15px; border-radius:10px; font-size:13px; border:1px solid #ddd; overflow-y: auto; max-height: 250px; white-space: pre-wrap; font-family: inherit;"></pre>
-        <button class="btn btn-list" style="width:100%; padding:14px; font-size:14px" onclick="copyList()">Copiar Lista</button>
-        <button class="btn" style="width:100%; background:#95a5a6; margin-top:10px; padding:14px; font-size:14px" onclick="closeModal('listModal')">Cerrar</button>
+        <button class="btn btn-list" style="width:100%; padding:14px;" onclick="copyList()">Copiar Lista</button>
+        <button class="btn" style="width:100%; background:#95a5a6; margin-top:10px; padding:14px;" onclick="closeModal('listModal')">Cerrar</button>
     </div>
 </div>
 
 <script>
-    let repoData = {
-        alm: [{n: "Lentejas", i: "Lentejas, Chorizo"}, {n: "Arroz Pollo", i: "Arroz, Pollo"}],
-        cena: [{n: "Tortilla", i: "Huevos, Patatas"}, {n: "Sopa", i: "Fideos"}]
+    const defaultRepo = {
+        alm: [
+            {n: "Lentejas con verduras", i: "Lentejas, Zanahoria, Puerro"},
+            {n: "Arroz con Pollo", i: "Arroz, Pechuga, Guisantes"},
+            {n: "Merluza al horno", i: "Merluza, Patata, Limón"},
+            {n: "Macarrones Boloñesa", i: "Pasta, Carne picada, Tomate"},
+            {n: "Garbanzos con espinacas", i: "Garbanzos, Espinacas, Huevo"},
+            {n: "Albóndigas en salsa", i: "Carne, Pan rallado, Tomate"},
+            {n: "Crema de calabacín", i: "Calabacín, Quesito, Cebolla"},
+            {n: "Pez Espada plancha", i: "Pez Espada, Ensalada"},
+            {n: "Pollo asado", i: "Muslos pollo, Patatas"},
+            {n: "Guiso de pavo", i: "Pavo, Alcachofas, Caldo"}
+        ],
+        cena: [
+            {n: "Tortilla de patatas", i: "Huevos, Patatas"},
+            {n: "Pizza casera", i: "Harina, Queso, Jamón"},
+            {n: "Sopa de fideos", i: "Caldo, Fideos, Pollo"},
+            {n: "Sandwich Mixto", i: "Pan, Jamón, Queso"},
+            {n: "Hamburguesa pavo", i: "Pan burger, Pavo, Lechuga"},
+            {n: "Croquetas jamón", i: "Leche, Harina, Jamón"},
+            {n: "Empanadillas atún", i: "Obleas, Atún, Tomate"},
+            {n: "Quesadillas", i: "Tortilla trigo, Queso"},
+            {n: "Huevo pasado agua", i: "Huevos, Pan"},
+            {n: "Pescadilla rebozada", i: "Pescadilla, Huevo"}
+        ]
     };
+
+    let repoData = defaultRepo;
     const days = ['LUNES', 'MARTES', 'MIER.', 'JUEVES', 'VIER.', 'SÁBADO', 'DOM.'];
     let currentTab = 'alm';
 
     window.onload = () => {
-        const saved = localStorage.getItem('kidsPlannerMobileV3');
-        if(saved) repoData = JSON.parse(saved);
+        const saved = localStorage.getItem('kidsPlannerV4');
+        if(saved) {
+            repoData = JSON.parse(saved);
+        } else {
+            // Primera vez: mostrar mensaje
+            const toast = document.getElementById('welcome-toast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.fadeOut = "slow", 4000);
+            setTimeout(() => toast.style.display = 'none', 4500);
+        }
         renderRepo();
         initMonth();
     };
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
     function switchTab(tipo) {
         currentTab = tipo;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`tab-${tipo}`).classList.add('active');
         document.querySelectorAll('.repo-content').forEach(c => c.classList.remove('active'));
         document.getElementById(`repo-${tipo}`).classList.add('active');
-        
-        // Cambiar color del botón de añadir
-        const addBtn = document.getElementById('main-add-btn');
-        addBtn.style.background = tipo === 'alm' ? 'var(--alm-color)' : 'var(--cena-color)';
+        document.getElementById('main-add-btn').style.background = tipo === 'alm' ? 'var(--alm-color)' : 'var(--cena-color)';
     }
 
     function initMonth() {
@@ -172,7 +189,7 @@
         for (let w = 1; w <= 3; w++) {
             let html = `<div class="week-container"><div class="week-header">SEMANA ${w}</div><div class="week-grid-wrapper"><div class="week-grid">`;
             days.forEach((day, idx) => {
-                html += `<div class="day-box"><div class="day-label ${idx > 4 ? 'weekend-label' : ''}">${day}</div>
+                html += `<div class="day-box"><div class="day-label">${day}</div>
                 <div class="slot alm-slot" data-label="ALM" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 <div class="slot cena-slot" data-label="CENA" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>`;
             });
@@ -185,12 +202,22 @@
             const cont = document.getElementById(`repo-${t}`);
             cont.innerHTML = '';
             repoData[t].forEach((p, i) => {
-                cont.insertAdjacentHTML('beforeend', `<div class="drag-item ${t}-item" draggable="true" id="${t}-${i}" ondragstart="e => e.dataTransfer.setData('text', e.target.id)">
+                cont.insertAdjacentHTML('beforeend', `<div class="drag-item ${t}-item" draggable="true" id="${t}-${i}" ondragstart="drag(event)">
                     <span>${p.n}</span><div class="actions-small">
                     <button class="btn-icon" onclick="editPlate('${t}', ${i})">✎</button>
                     <button class="btn-icon" onclick="deletePlate('${t}', ${i})">✕</button></div></div>`);
             });
         });
+    }
+
+    function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+    function allowDrop(e) { e.preventDefault(); }
+    function drop(e) {
+        e.preventDefault();
+        const ref = e.dataTransfer.getData("text");
+        if(!ref) return;
+        const [t, i] = ref.split('-');
+        addPlateToSlot(e.currentTarget, repoData[t][i].n, `${t}-item`, ref);
     }
 
     function autoFillMonth() {
@@ -211,7 +238,6 @@
     }
 
     function openModalFromSidebar() { openPlateModal(currentTab); }
-
     function openPlateModal(tipo, index = -1) {
         document.getElementById('mType').value = tipo;
         document.getElementById('mIndex').value = index;
@@ -227,25 +253,27 @@
         const name = document.getElementById('mName').value, ing = document.getElementById('mIng').value;
         if(!name) return;
         if(i > -1) repoData[t][i] = {n: name, i: ing}; else repoData[t].push({n: name, i: ing});
-        renderRepo(); closeModal('plateModal'); saveData();
+        renderRepo(); closeModal('plateModal'); saveData(false);
     }
 
-    function deletePlate(t, i) { event.stopPropagation(); if(confirm("¿Eliminar?")) { repoData[t].splice(i, 1); renderRepo(); saveData(); } }
+    function deletePlate(t, i) { event.stopPropagation(); if(confirm("¿Eliminar plato?")) { repoData[t].splice(i, 1); renderRepo(); saveData(false); } }
     function editPlate(t, i) { event.stopPropagation(); openPlateModal(t, i); }
-    function drop(e) { e.preventDefault(); const ref = e.dataTransfer.getData("text"); if(!ref) return; const [t, i] = ref.split('-'); addPlateToSlot(e.currentTarget, repoData[t][i].n, `${t}-item`, ref); }
-    function allowDrop(e) { e.preventDefault(); }
-    function saveData() { localStorage.setItem('kidsPlannerMobileV3', JSON.stringify(repoData)); alert("¡Guardado en este navegador!"); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function saveData(alertUser = true) { 
+        localStorage.setItem('kidsPlannerV4', JSON.stringify(repoData)); 
+        if(alertUser) alert("¡Guardado correctamente!"); 
+    }
+
     function showShoppingList() {
         let ings = new Set();
         document.querySelectorAll('.item-in-slot').forEach(el => {
             const [t, i] = el.dataset.ref.split('-');
-            if(repoData[t][i].i) repoData[t][i].i.split(',').forEach(x => ings.add(x.trim()));
+            if(repoData[t][i] && repoData[t][i].i) repoData[t][i].i.split(',').forEach(x => ings.add(x.trim()));
         });
-        document.getElementById('listText').innerText = Array.from(ings).map(x => `- ${x}`).join('\n') || "No hay ingredientes";
+        document.getElementById('listText').innerText = Array.from(ings).map(x => `- ${x}`).join('\n') || "Añade platos al menú para generar la lista.";
         document.getElementById('listModal').style.display = 'flex';
     }
-    function copyList() { navigator.clipboard.writeText(document.getElementById('listText').innerText).then(() => alert("Lista copiada")); }
+    function copyList() { navigator.clipboard.writeText(document.getElementById('listText').innerText).then(() => alert("Copiado")); }
 </script>
 </body>
 </html>
