@@ -11,11 +11,13 @@
         header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .header-left { display: flex; align-items: center; gap: 8px; }
         .menu-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .header-btns { display: flex; gap: 6px; }
-        .btn { border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 600; color: white; display: flex; align-items: center; gap: 4px; }
+        .header-btns { display: flex; gap: 5px; }
+        
+        .btn { border: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center; gap: 4px; }
         .btn-magic { background: var(--accent); }
         .btn-list { background: #16a085; }
         .btn-save { background: #3498db; }
+        .btn-import-head { background: #7f8c8d; }
 
         #welcome-toast { display: none; position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 20px; border-radius: 10px; font-size: 12px; z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; width: 85%; max-width: 350px; }
 
@@ -29,14 +31,13 @@
         .repo-content { display: none; }
         .repo-content.active { display: block; }
         
-        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; background: #fff; display: flex; flex-direction: column; gap: 8px; }
-        .btn-add-full { width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
-        .btn-import { background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; background: #fff; }
+        .btn-add-full { width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 13px; }
 
         .drag-item { padding: 10px 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .alm-item { background: var(--alm-color); }
         .cena-item { background: var(--cena-color); }
-        .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 4px 7px; border-radius: 5px; font-size: 10px; cursor: pointer; margin-left: 2px; }
+        .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 4px 7px; border-radius: 5px; font-size: 10px; cursor: pointer; }
 
         .month-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
         .week-container { background: white; border-radius: 14px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03); overflow: hidden; }
@@ -51,10 +52,14 @@
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(2px); }
         .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        
+        /* Contenedor de Código con botón de copiar */
+        .copy-container { position: relative; background: #f4f4f4; border-radius: 10px; border: 1px solid #ddd; margin: 10px 0; overflow: hidden; }
+        .copy-input { width: 100%; border: none; background: transparent; padding: 15px 45px 15px 15px; font-family: monospace; font-size: 12px; color: #555; box-sizing: border-box; }
+        .copy-btn-inner { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 5px; cursor: pointer; display: flex; align-items: center; }
 
         @media (max-width: 850px) {
-            .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
         }
     </style>
@@ -64,11 +69,12 @@
 <div id="welcome-toast">✅ Se han cargado platos por defecto. Edítalos, elimínalos o añade los tuyos.</div>
 
 <header>
-    <div class="header-left"><button class="menu-toggle" onclick="toggleSidebar()">☰ PLATOS</button></div>
+    <div class="header-left"><button class="menu-toggle" onclick="toggleSidebar()">☰</button></div>
     <div class="header-btns">
         <button class="btn btn-magic" onclick="autoFillMonth()">✨ Sugerir</button>
         <button class="btn btn-list" onclick="showShoppingList()">🛒 Lista</button>
         <button class="btn btn-save" onclick="exportCode()">💾 Guardar</button>
+        <button class="btn btn-import-head" onclick="importCode()">📥 Importar</button>
     </div>
 </header>
 
@@ -84,7 +90,6 @@
         </div>
         <div class="sidebar-footer">
             <button id="main-add-btn" class="btn-add-full" style="background: var(--alm-color);" onclick="openPlateModal(currentTab)">+ Nuevo Plato</button>
-            <button class="btn-import" onclick="importCode()">📥 Importar Código</button>
         </div>
     </aside>
     <main class="month-view" id="month-view"></main>
@@ -93,41 +98,61 @@
 <div id="plateModal" class="modal"><div class="modal-content">
     <h3 id="modalTitle" style="margin-top:0">Configurar Plato</h3>
     <input type="hidden" id="mType"><input type="hidden" id="mIndex">
-    <input type="text" id="mName" placeholder="Nombre (ej: Crema Calabaza)">
-    <textarea id="mIng" placeholder="Ingredientes (ej: Calabaza, Quesitos)"></textarea>
-    <div style="display:flex; gap:10px;">
-        <button class="btn" style="flex:1; background:var(--alm-color); padding:14px;" onclick="savePlate()">Guardar</button>
-        <button class="btn" style="flex:1; background:#95a5a6; padding:14px;" onclick="closeModal('plateModal')">Cancelar</button>
+    <input type="text" id="mName" placeholder="Nombre (ej: Crema Calabaza)" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+    <textarea id="mIng" placeholder="Ingredientes (ej: Calabaza, Quesitos)" style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn" style="flex:1; background:var(--alm-color); padding:14px; font-size:14px;" onclick="savePlate()">Guardar</button>
+        <button class="btn" style="flex:1; background:#95a5a6; padding:14px; font-size:14px;" onclick="closeModal('plateModal')">Cancelar</button>
     </div>
 </div></div>
 
 <div id="msgModal" class="modal"><div class="modal-content">
-    <h3 id="msgTitle">Título</h3>
-    <p id="msgDesc" style="font-size: 12px; color: #666;"></p>
-    <pre id="msgText" style="background:#f4f4f4; padding:15px; border-radius:10px; font-size:13px; overflow-y: auto; max-height: 200px; white-space: pre-wrap; font-family: inherit; border:1px solid #ddd;"></pre>
-    <button id="msgActionBtn" class="btn btn-list" style="width:100%; padding:14px; margin-top:10px;">Copiar</button>
-    <button class="btn" style="width:100%; background:#95a5a6; margin-top:10px; padding:12px;" onclick="closeModal('msgModal')">Cerrar</button>
+    <h3 id="msgTitle" style="margin-top:0">Título</h3>
+    <p id="msgDesc" style="font-size: 12px; color: #666; margin-bottom:10px;"></p>
+    
+    <div id="msgTextContainer" class="copy-container">
+        <input id="msgInput" class="copy-input" readonly>
+        <button class="copy-btn-inner" onclick="copyFromInput()">📋</button>
+    </div>
+    <pre id="msgPre" style="display:none; background:#f4f4f4; padding:15px; border-radius:10px; font-size:13px; overflow-y: auto; max-height: 200px; white-space: pre-wrap; border:1px solid #ddd;"></pre>
+
+    <button class="btn" style="width:100%; background:var(--primary); margin-top:15px; padding:14px; font-size:14px;" onclick="closeModal('msgModal')">Cerrar</button>
 </div></div>
 
 <script>
-    const seasonalRepo = {
+    const fullSeasonalRepo = {
         alm: [
-            {n: "Lentejas con calabaza", i: "Lentejas, Calabaza"}, {n: "Arroz con pollo", i: "Arroz, Pollo"},
-            {n: "Albóndigas pavo", i: "Pavo, Tomate"}, {n: "Crema verduras", i: "Calabacín, Patata"},
-            {n: "Macarrones atún", i: "Pasta, Atún"}, {n: "Pescado al horno", i: "Merluza, Patata"}
+            {n: "Lentejas con calabaza", i: "Lentejas, Calabaza, Zanahoria"},
+            {n: "Arroz con pollo y guisantes", i: "Arroz, Pollo, Guisantes"},
+            {n: "Albóndigas de pavo", i: "Pavo, Tomate"},
+            {n: "Crema de verduras", i: "Calabacín, Puerro, Patata"},
+            {n: "Macarrones con atún", i: "Pasta, Atún, Tomate"},
+            {n: "Pescado blanco al horno", i: "Merluza, Patata"},
+            {n: "Garbanzos con huevo", i: "Garbanzos, Huevo duro"},
+            {n: "Pollo asado con manzana", i: "Pollo, Manzana"},
+            {n: "Guiso de patata y ternera", i: "Patata, Ternera, Judías"},
+            {n: "Fideuá de verduras", i: "Fideos, Pimiento, Champiñón"}
         ],
         cena: [
-            {n: "Tortilla calabacín", i: "Huevos, Calabacín"}, {n: "Sopa estrellas", i: "Caldo, Pasta"},
-            {n: "Pizza casera", i: "Masa, Jamón, Queso"}, {n: "Hamburguesa pollo", i: "Pollo, Pan"}
+            {n: "Tortilla de calabacín", i: "Huevos, Calabacín"},
+            {n: "Sopa de estrellas", i: "Caldo, Pasta estrellas"},
+            {n: "Varitas de pescado caseras", i: "Pescado blanco, Pan rallado"},
+            {n: "Pizza de jamón y queso", i: "Masa pizza, Jamón York, Queso"},
+            {n: "Hamburguesa de pollo", i: "Pechuga pollo, Pan burger"},
+            {n: "Croquetas de jamón", i: "Leche, Harina, Jamón"},
+            {n: "San Jacobo de lomo", i: "Lomo, Queso lonchas"},
+            {n: "Quesadilla con tomate", i: "Tortilla trigo, Queso"},
+            {n: "Crema de zanahoria", i: "Zanahoria, Quesitos"},
+            {n: "Revuelto de espárragos", i: "Huevos, Espárragos trigueros"}
         ]
     };
 
-    let repoData = JSON.parse(localStorage.getItem('kp_repo_v6')) || seasonalRepo;
-    let calendarState = JSON.parse(localStorage.getItem('kp_cal_v6')) || {};
+    let repoData = JSON.parse(localStorage.getItem('kp_repo_v7')) || fullSeasonalRepo;
+    let calendarState = JSON.parse(localStorage.getItem('kp_cal_v7')) || {};
     let currentTab = 'alm';
 
     window.onload = () => {
-        if(!localStorage.getItem('kp_repo_v6')) {
+        if(!localStorage.getItem('kp_repo_v7')) {
             const toast = document.getElementById('welcome-toast');
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 5000);
@@ -191,8 +216,8 @@
     }
 
     function autoSave() {
-        localStorage.setItem('kp_repo_v6', JSON.stringify(repoData));
-        localStorage.setItem('kp_cal_v6', JSON.stringify(calendarState));
+        localStorage.setItem('kp_repo_v7', JSON.stringify(repoData));
+        localStorage.setItem('kp_cal_v7', JSON.stringify(calendarState));
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -239,14 +264,15 @@
         let ings = new Set();
         for(let id in calendarState) {
             const d = calendarState[id];
-            if(repoData[d.type][d.index].i) repoData[d.type][d.index].i.split(',').forEach(x => ings.add(x.trim()));
+            if(repoData[d.type] && repoData[d.type][d.index].i) repoData[d.type][d.index].i.split(',').forEach(x => ings.add(x.trim()));
         }
-        showMsg("🛒 Lista de la Compra", "Copialo y pegalo en tu aplicación favorita de notas.", Array.from(ings).map(x => `- ${x}`).join('\n') || "Vacío");
+        const texto = Array.from(ings).map(x => `- ${x}`).join('\n') || "Vacío";
+        showMsg("🛒 Lista de la Compra", "Copialo y pegalo en tu aplicación favorita de notas.", texto, true);
     }
 
     function exportCode() {
         const code = btoa(unescape(encodeURIComponent(JSON.stringify({repo: repoData, cal: calendarState}))));
-        showMsg("💾 Guardado y Código", "Los cambios están guardados en este navegador. Copia este código para recuperar tus platos y menú en otro dispositivo o pasárselo a tu socio.", code);
+        showMsg("💾 Guardado y Código", "Los cambios están guardados en este navegador. Copia este código para recuperar tus platos y menú en otro dispositivo o pasárselo a quien quieras.", code, false);
     }
 
     function importCode() {
@@ -260,12 +286,29 @@
         }
     }
 
-    function showMsg(title, desc, text) {
+    function showMsg(title, desc, text, isList) {
         document.getElementById('msgTitle').innerText = title;
         document.getElementById('msgDesc').innerText = desc;
-        document.getElementById('msgText').innerText = text;
-        document.getElementById('msgActionBtn').onclick = () => { navigator.clipboard.writeText(text); alert("Copiado"); };
+        const inputCont = document.getElementById('msgTextContainer');
+        const preCont = document.getElementById('msgPre');
+        
+        if(isList) {
+            inputCont.style.display = 'none';
+            preCont.style.display = 'block';
+            preCont.innerText = text;
+        } else {
+            inputCont.style.display = 'block';
+            preCont.style.display = 'none';
+            document.getElementById('msgInput').value = text;
+        }
         document.getElementById('msgModal').style.display = 'flex';
+    }
+
+    function copyFromInput() {
+        const input = document.getElementById('msgInput');
+        input.select();
+        document.execCommand('copy');
+        alert("¡Código copiado!");
     }
 
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
