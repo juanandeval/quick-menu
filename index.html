@@ -3,85 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kids Planner - Platos</title>
+    <title>Kids Planner PRO</title>
     <style>
-        :root {
-            --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6;
-            --primary: #2c3e50; --accent: #8e44ad; --text: #333;
-        }
+        :root { --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6; --primary: #2c3e50; --accent: #8e44ad; --text: #333; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 14px; }
-        
-        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: sticky; top: 0; }
+        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .header-left { display: flex; align-items: center; gap: 12px; }
-        
-        .menu-toggle { 
-            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); 
-            color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; 
-            font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px;
-        }
-
+        .menu-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .header-btns { display: flex; gap: 6px; }
         .btn { border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 600; color: white; display: flex; align-items: center; gap: 4px; }
         .btn-magic { background: var(--accent); }
         .btn-list { background: #16a085; }
         .btn-save { background: #3498db; }
-
         .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
-
         .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 950; transition: transform 0.3s ease; }
         .sidebar-tabs { display: flex; border-bottom: 2px solid #eee; background: #fafafa; }
         .tab-btn { flex: 1; padding: 14px; border: none; background: none; font-weight: bold; color: #888; cursor: pointer; font-size: 11px; text-transform: uppercase; border-bottom: 3px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: white; }
-        
         .sidebar-content { flex: 1; overflow-y: auto; padding: 12px; }
         .repo-content { display: none; }
         .repo-content.active { display: block; }
-
-        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; background: #fff; }
-        .btn-add-full { width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-
-        .drag-item { padding: 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .sidebar-footer { padding: 10px; border-top: 1px solid #eee; }
+        .btn-add-full { width: 100%; padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        .drag-item { padding: 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: grab; }
         .alm-item { background: var(--alm-color); }
         .cena-item { background: var(--cena-color); }
-        .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 5px 9px; border-radius: 6px; font-size: 10px; }
-
         .month-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-        .week-container { background: white; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; overflow: hidden; }
-        .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 12px; color: var(--primary); border-bottom: 1px solid #eee; }
-        
-        .week-grid-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .week-container { background: white; border-radius: 14px; border: 1px solid #eee; overflow: hidden; }
+        .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 12px; border-bottom: 1px solid #eee; }
+        .week-grid-wrapper { overflow-x: auto; }
         .week-grid { display: flex; gap: 10px; padding: 15px; min-width: 850px; }
-        
         .day-box { flex: 0 0 115px; display: flex; flex-direction: column; gap: 6px; }
-        .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; text-transform: uppercase; }
+        .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; }
         .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 50px; padding: 4px; position: relative; background: #fff; }
-        .slot::after { content: attr(data-label); position: absolute; bottom: 2px; right: 4px; font-size: 8px; color: #ced4da; }
-        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(2px); }
+        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; cursor: pointer; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
         .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; }
-        
-        /* Banner de Notificación */
-        #welcome-toast { display: none; position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 20px; border-radius: 10px; font-size: 12px; z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; width: 80%; max-width: 300px; }
-
-        @media (max-width: 850px) {
-            .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; }
-            .sidebar.open { transform: translateX(0); }
-        }
+        @media (max-width: 850px) { .sidebar { position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
-<div id="welcome-toast">✅ Se han cargado platos por defecto. ¡Puedes editarlos o añadir nuevos!</div>
-
 <header>
-    <div class="header-left">
-        <button class="menu-toggle" onclick="toggleSidebar()">☰ PLATOS</button>
-    </div>
+    <div class="header-left"><button class="menu-toggle" onclick="toggleSidebar()">☰ PLATOS</button></div>
     <div class="header-btns">
         <button class="btn btn-magic" onclick="autoFillMonth()">✨ Sugerir</button>
         <button class="btn btn-list" onclick="showShoppingList()">🛒 Lista</button>
-        <button class="btn btn-save" onclick="saveData()">💾 Guardar</button>
+        <button class="btn btn-save" onclick="exportConfig()">🔗 Compartir</button>
     </div>
 </header>
 
@@ -96,184 +64,155 @@
             <div id="repo-cena" class="repo-content"></div>
         </div>
         <div class="sidebar-footer">
-            <button id="main-add-btn" class="btn-add-full" style="background: var(--alm-color);" onclick="openModalFromSidebar()">
-                <span>+ Añadir Nuevo</span>
-            </button>
+            <button id="main-add-btn" class="btn-add-full" style="background: var(--alm-color);" onclick="openPlateModal(currentTab)">+ Nuevo Plato</button>
         </div>
     </aside>
     <main class="month-view" id="month-view"></main>
 </div>
 
-<div id="plateModal" class="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle" style="margin-top:0">Configurar Plato</h3>
-        <input type="hidden" id="mType"><input type="hidden" id="mIndex">
-        <input type="text" id="mName" placeholder="Nombre del plato">
-        <textarea id="mIng" placeholder="Ingredientes (ej: Lentejas, Chorizo, Patata)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; height:80px;"></textarea>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn" style="flex:1; background:var(--alm-color); padding:14px;" onclick="savePlate()">Guardar</button>
-            <button class="btn" style="flex:1; background:#95a5a6; padding:14px;" onclick="closeModal('plateModal')">Cerrar</button>
-        </div>
-    </div>
-</div>
+<div id="plateModal" class="modal"><div class="modal-content">
+    <h3 id="modalTitle">Configurar Plato</h3>
+    <input type="hidden" id="mType"><input type="hidden" id="mIndex">
+    <input type="text" id="mName" placeholder="Nombre" style="width:100%; padding:10px; margin-bottom:10px;">
+    <textarea id="mIng" placeholder="Ingredientes (coma para separar)" style="width:100%; height:80px; padding:10px;"></textarea>
+    <div style="display:flex; gap:10px;"><button class="btn" style="flex:1; background:var(--alm-color)" onclick="savePlate()">Guardar</button>
+    <button class="btn" style="flex:1; background:#95a5a6" onclick="closeModal('plateModal')">Cerrar</button></div>
+</div></div>
 
-<div id="listModal" class="modal">
-    <div class="modal-content">
-        <h3>🛒 Lista de la Compra</h3>
-        <pre id="listText" style="background:#f4f4f4; padding:15px; border-radius:10px; font-size:13px; border:1px solid #ddd; overflow-y: auto; max-height: 250px; white-space: pre-wrap; font-family: inherit;"></pre>
-        <button class="btn btn-list" style="width:100%; padding:14px;" onclick="copyList()">Copiar Lista</button>
-        <button class="btn" style="width:100%; background:#95a5a6; margin-top:10px; padding:14px;" onclick="closeModal('listModal')">Cerrar</button>
-    </div>
-</div>
+<div id="listModal" class="modal"><div class="modal-content">
+    <h3>🛒 Lista de la Compra</h3>
+    <pre id="listText" style="background:#f4f4f4; padding:15px; border-radius:10px; max-height:200px; overflow:auto;"></pre>
+    <button class="btn btn-list" style="width:100%" onclick="copyList()">Copiar</button>
+</div></div>
 
 <script>
     const defaultRepo = {
-        alm: [
-            {n: "Lentejas con verduras", i: "Lentejas, Zanahoria, Puerro"},
-            {n: "Arroz con Pollo", i: "Arroz, Pechuga, Guisantes"},
-            {n: "Merluza al horno", i: "Merluza, Patata, Limón"},
-            {n: "Macarrones Boloñesa", i: "Pasta, Carne picada, Tomate"},
-            {n: "Garbanzos con espinacas", i: "Garbanzos, Espinacas, Huevo"},
-            {n: "Albóndigas en salsa", i: "Carne, Pan rallado, Tomate"},
-            {n: "Crema de calabacín", i: "Calabacín, Quesito, Cebolla"},
-            {n: "Pez Espada plancha", i: "Pez Espada, Ensalada"},
-            {n: "Pollo asado", i: "Muslos pollo, Patatas"},
-            {n: "Guiso de pavo", i: "Pavo, Alcachofas, Caldo"}
-        ],
-        cena: [
-            {n: "Tortilla de patatas", i: "Huevos, Patatas"},
-            {n: "Pizza casera", i: "Harina, Queso, Jamón"},
-            {n: "Sopa de fideos", i: "Caldo, Fideos, Pollo"},
-            {n: "Sandwich Mixto", i: "Pan, Jamón, Queso"},
-            {n: "Hamburguesa pavo", i: "Pan burger, Pavo, Lechuga"},
-            {n: "Croquetas jamón", i: "Leche, Harina, Jamón"},
-            {n: "Empanadillas atún", i: "Obleas, Atún, Tomate"},
-            {n: "Quesadillas", i: "Tortilla trigo, Queso"},
-            {n: "Huevo pasado agua", i: "Huevos, Pan"},
-            {n: "Pescadilla rebozada", i: "Pescadilla, Huevo"}
-        ]
+        alm: [{n: "Lentejas", i: "Lentejas"}, {n: "Pasta", i: "Pasta"}, {n: "Arroz Pollo", i: "Arroz, Pollo"}],
+        cena: [{n: "Tortilla", i: "Huevos"}, {n: "Sopa", i: "Fideos"}, {n: "Pizza", i: "Masa"}]
     };
 
-    let repoData = defaultRepo;
-    const days = ['LUNES', 'MARTES', 'MIER.', 'JUEVES', 'VIER.', 'SÁBADO', 'DOM.'];
+    let repoData = JSON.parse(localStorage.getItem('kp_repo')) || defaultRepo;
+    let calendarState = JSON.parse(localStorage.getItem('kp_calendar')) || {}; 
     let currentTab = 'alm';
 
     window.onload = () => {
-        const saved = localStorage.getItem('kidsPlannerV4');
-        if(saved) {
-            repoData = JSON.parse(saved);
-        } else {
-            // Primera vez: mostrar mensaje
-            const toast = document.getElementById('welcome-toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.fadeOut = "slow", 4000);
-            setTimeout(() => toast.style.display = 'none', 4500);
-        }
         renderRepo();
         initMonth();
+        loadCalendar();
     };
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-    function switchTab(tipo) {
-        currentTab = tipo;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`tab-${tipo}`).classList.add('active');
-        document.querySelectorAll('.repo-content').forEach(c => c.classList.remove('active'));
-        document.getElementById(`repo-${tipo}`).classList.add('active');
-        document.getElementById('main-add-btn').style.background = tipo === 'alm' ? 'var(--alm-color)' : 'var(--cena-color)';
-    }
-
     function initMonth() {
-        const view = document.getElementById('month-view');
-        view.innerHTML = '';
+        const view = document.getElementById('month-view'); view.innerHTML = '';
         for (let w = 1; w <= 3; w++) {
             let html = `<div class="week-container"><div class="week-header">SEMANA ${w}</div><div class="week-grid-wrapper"><div class="week-grid">`;
-            days.forEach((day, idx) => {
-                html += `<div class="day-box"><div class="day-label">${day}</div>
-                <div class="slot alm-slot" data-label="ALM" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <div class="slot cena-slot" data-label="CENA" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>`;
-            });
+            for(let d=0; d<7; d++) {
+                html += `<div class="day-box"><div class="day-label">${['LUN','MAR','MIE','JUE','VIE','SAB','DOM'][d]}</div>
+                <div class="slot alm-slot" id="w${w}d${d}alm" data-label="ALM" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div>
+                <div class="slot cena-slot" id="w${w}d${d}cena" data-label="CENA" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div></div>`;
+            }
             view.insertAdjacentHTML('beforeend', html + `</div></div></div>`);
         }
     }
 
     function renderRepo() {
         ['alm', 'cena'].forEach(t => {
-            const cont = document.getElementById(`repo-${t}`);
-            cont.innerHTML = '';
+            const cont = document.getElementById(`repo-${t}`); cont.innerHTML = '';
             repoData[t].forEach((p, i) => {
                 cont.insertAdjacentHTML('beforeend', `<div class="drag-item ${t}-item" draggable="true" id="${t}-${i}" ondragstart="drag(event)">
-                    <span>${p.n}</span><div class="actions-small">
-                    <button class="btn-icon" onclick="editPlate('${t}', ${i})">✎</button>
-                    <button class="btn-icon" onclick="deletePlate('${t}', ${i})">✕</button></div></div>`);
+                    <span>${p.n}</span><div class="actions">
+                    <button class="btn-icon" onclick="deletePlate('${t}',${i})">✕</button></div></div>`);
             });
         });
     }
 
     function drag(e) { e.dataTransfer.setData("text", e.target.id); }
-    function allowDrop(e) { e.preventDefault(); }
     function drop(e) {
-        e.preventDefault();
-        const ref = e.dataTransfer.getData("text");
-        if(!ref) return;
-        const [t, i] = ref.split('-');
-        addPlateToSlot(e.currentTarget, repoData[t][i].n, `${t}-item`, ref);
+        e.preventDefault(); const id = e.dataTransfer.getData("text");
+        if(!id) return;
+        const [t, i] = id.split('-');
+        setSlot(e.currentTarget.id, t, i);
+    }
+
+    function setSlot(slotId, type, index) {
+        const slot = document.getElementById(slotId);
+        const p = repoData[type][index];
+        slot.innerHTML = `<div class="item-in-slot ${type}-item" onclick="clearSlot('${slotId}')">${p.n}</div>`;
+        calendarState[slotId] = {type, index};
+        saveAll();
+    }
+
+    function clearSlot(slotId) {
+        document.getElementById(slotId).innerHTML = '';
+        delete calendarState[slotId];
+        saveAll();
+    }
+
+    function loadCalendar() {
+        for (let slotId in calendarState) {
+            const data = calendarState[slotId];
+            if(repoData[data.type][data.index]) {
+                setSlot(slotId, data.type, data.index);
+            }
+        }
+    }
+
+    function saveAll() {
+        localStorage.setItem('kp_repo', JSON.stringify(repoData));
+        localStorage.setItem('kp_calendar', JSON.stringify(calendarState));
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+    function switchTab(t) { 
+        currentTab = t; 
+        document.querySelectorAll('.tab-btn, .repo-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-'+t).classList.add('active');
+        document.getElementById('repo-'+t).classList.add('active');
+        document.getElementById('main-add-btn').style.background = t === 'alm' ? 'var(--alm-color)' : 'var(--cena-color)';
     }
 
     function autoFillMonth() {
-        document.querySelectorAll('.week-container').forEach(row => {
-            ['alm', 'cena'].forEach(t => {
-                const slots = row.querySelectorAll(`.${t}-slot`);
-                let rand = [...Array(repoData[t].length).keys()].sort(() => Math.random() - 0.5);
-                for(let i = 0; i < 5; i++) {
-                    slots[i].innerHTML = '';
-                    if(rand[i] !== undefined) addPlateToSlot(slots[i], repoData[t][rand[i]].n, `${t}-item`, `${t}-${rand[i]}`);
-                }
-            });
-        });
+        for(let w=1; w<=3; w++) {
+            for(let d=0; d<5; d++) {
+                ['alm','cena'].forEach(t => {
+                    let r = Math.floor(Math.random() * repoData[t].length);
+                    setSlot(`w${w}d${d}${t}`, t, r);
+                });
+            }
+        }
     }
 
-    function addPlateToSlot(s, text, cls, ref) {
-        s.insertAdjacentHTML('beforeend', `<div class="item-in-slot ${cls}" data-ref="${ref}" onclick="this.remove()">${text}</div>`);
-    }
-
-    function openModalFromSidebar() { openPlateModal(currentTab); }
-    function openPlateModal(tipo, index = -1) {
-        document.getElementById('mType').value = tipo;
-        document.getElementById('mIndex').value = index;
-        if(index > -1) {
-            document.getElementById('mName').value = repoData[tipo][index].n;
-            document.getElementById('mIng').value = repoData[tipo][index].i;
-        } else { document.getElementById('mName').value = ''; document.getElementById('mIng').value = ''; }
-        document.getElementById('plateModal').style.display = 'flex';
-    }
-
-    function savePlate() {
-        const t = document.getElementById('mType').value, i = parseInt(document.getElementById('mIndex').value);
-        const name = document.getElementById('mName').value, ing = document.getElementById('mIng').value;
-        if(!name) return;
-        if(i > -1) repoData[t][i] = {n: name, i: ing}; else repoData[t].push({n: name, i: ing});
-        renderRepo(); closeModal('plateModal'); saveData(false);
-    }
-
-    function deletePlate(t, i) { event.stopPropagation(); if(confirm("¿Eliminar plato?")) { repoData[t].splice(i, 1); renderRepo(); saveData(false); } }
-    function editPlate(t, i) { event.stopPropagation(); openPlateModal(t, i); }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function saveData(alertUser = true) { 
-        localStorage.setItem('kidsPlannerV4', JSON.stringify(repoData)); 
-        if(alertUser) alert("¡Guardado correctamente!"); 
+    function exportConfig() {
+        const config = btoa(JSON.stringify({repo: repoData, cal: calendarState}));
+        navigator.clipboard.writeText(config);
+        alert("Configuración copiada. Pásasela a tu socio para que la cargue.");
     }
 
     function showShoppingList() {
         let ings = new Set();
-        document.querySelectorAll('.item-in-slot').forEach(el => {
-            const [t, i] = el.dataset.ref.split('-');
-            if(repoData[t][i] && repoData[t][i].i) repoData[t][i].i.split(',').forEach(x => ings.add(x.trim()));
-        });
-        document.getElementById('listText').innerText = Array.from(ings).map(x => `- ${x}`).join('\n') || "Añade platos al menú para generar la lista.";
+        for(let id in calendarState) {
+            const d = calendarState[id];
+            repoData[d.type][d.index].i.split(',').forEach(x => ings.add(x.trim()));
+        }
+        document.getElementById('listText').innerText = Array.from(ings).map(x => `- ${x}`).join('\n') || "Vacio";
         document.getElementById('listModal').style.display = 'flex';
     }
-    function copyList() { navigator.clipboard.writeText(document.getElementById('listText').innerText).then(() => alert("Copiado")); }
+
+    function openPlateModal(t) { 
+        document.getElementById('mType').value = t; 
+        document.getElementById('mName').value = ''; 
+        document.getElementById('mIng').value = '';
+        document.getElementById('plateModal').style.display = 'flex'; 
+    }
+    
+    function savePlate() {
+        const t = document.getElementById('mType').value;
+        repoData[t].push({n: document.getElementById('mName').value, i: document.getElementById('mIng').value});
+        renderRepo(); saveAll(); closeModal('plateModal');
+    }
+
+    function deletePlate(t, i) { repoData[t].splice(i, 1); renderRepo(); saveAll(); }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function copyList() { navigator.clipboard.writeText(document.getElementById('listText').innerText); alert("Copiado"); }
 </script>
 </body>
 </html>
