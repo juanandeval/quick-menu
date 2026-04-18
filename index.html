@@ -6,9 +6,11 @@
     <title>Platos - Kids Planner</title>
     <style>
         :root { --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6; --primary: #2c3e50; --accent: #8e44ad; --text: #333; --light-gray: #f8f9fa; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 14px; }
         
-        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        /* Corregido el scroll general */
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-y: auto; font-size: 14px; }
+        
+        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .header-left { display: flex; align-items: center; gap: 10px; }
         .app-title { font-weight: bold; font-size: 18px; margin: 0; }
         .version-tag { font-size: 9px; opacity: 0.6; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; }
@@ -19,14 +21,13 @@
         .btn-list { background: #16a085; }
         .btn-save { background: #3498db; }
         .btn-import-head { background: #7f8c8d; }
-
         .menu-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 16px; }
 
-        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .main-container { display: flex; flex: 1; position: relative; min-height: 0; }
 
-        /* SIDEBAR */
-        .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 950; transition: transform 0.3s ease; }
-        .sidebar.closed { transform: translateX(-100%); width: 0; overflow: hidden; border: none; }
+        /* SIDEBAR PRO - Ajustado para móvil y escritorio */
+        .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; position: sticky; top: 58px; height: calc(100vh - 58px); transition: all 0.3s ease; z-index: 1050; }
+        .sidebar.closed { width: 0; overflow: hidden; border: none; }
         
         .sidebar-tabs { display: flex; border-bottom: 2px solid #eee; background: #fafafa; }
         .tab-btn { flex: 1; padding: 14px; border: none; background: none; font-weight: bold; color: #888; cursor: pointer; font-size: 11px; text-transform: uppercase; border-bottom: 3px solid transparent; }
@@ -35,47 +36,42 @@
         .repo-content { display: none; }
         .repo-content.active { display: block; }
         
-        /* PLATOS (Vuelven a su color original) */
         .drag-item { padding: 10px 12px; margin-bottom: 8px; border-radius: 10px; color: white; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .alm-item { background: var(--alm-color); }
         .cena-item { background: var(--cena-color); }
         .btn-icon { background: rgba(0,0,0,0.15); border: none; color: white; padding: 4px 7px; border-radius: 5px; font-size: 10px; cursor: pointer; }
 
-        /* BOTÓN AÑADIR (Gris con texto color) */
         .sidebar-footer { padding: 10px; border-top: 1px solid #eee; }
         .btn-add-full { width: 100%; padding: 14px; border: 2px solid currentColor; border-radius: 8px; background: var(--light-gray); font-weight: bold; cursor: pointer; font-size: 13px; }
         .btn-add-alm { color: var(--alm-color); }
         .btn-add-cena { color: var(--cena-color); }
 
-        /* CALENDARIO */
-        .month-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; transition: margin 0.3s ease; }
-        .week-container { background: white; border-radius: 14px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03); overflow: hidden; }
-        .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 12px; border-bottom: 1px solid #eee; }
+        /* CALENDARIO - Scroll vertical libre */
+        .month-view { flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+        .week-container { background: white; border-radius: 14px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 13px; border-bottom: 1px solid #eee; }
         .week-grid-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .week-grid { display: flex; gap: 10px; padding: 15px; min-width: 850px; }
-        .day-box { flex: 0 0 115px; display: flex; flex-direction: column; gap: 6px; }
+        .day-box { flex: 0 0 115px; display: flex; flex-direction: column; gap: 8px; }
         .day-label { font-size: 11px; font-weight: 800; text-align: center; color: #999; text-transform: uppercase; }
         
-        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 55px; padding: 4px; position: relative; background: #fff; }
-        .slot::after { content: attr(data-label); position: absolute; bottom: 3px; right: 5px; font-size: 9px; font-weight: 800; color: #dee2e6; letter-spacing: 0.5px; }
-        
-        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .slot { border: 2px dashed #e9ecef; border-radius: 10px; min-height: 60px; padding: 5px; position: relative; background: #fff; }
+        .slot::after { content: attr(data-label); position: absolute; bottom: 3px; right: 5px; font-size: 9px; font-weight: 800; color: #dee2e6; }
+        .item-in-slot { padding: 6px; border-radius: 6px; color: white; font-size: 11px; text-align: center; font-weight: 600; margin-bottom: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         /* MODALES */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(2px); }
         .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         
-        /* Input de copia con icono */
         .copy-container { position: relative; background: #f4f4f4; border-radius: 10px; border: 1px solid #ddd; margin: 10px 0; overflow: hidden; }
-        .copy-box { width: 100%; border: none; background: transparent; padding: 15px 45px 15px 15px; font-family: inherit; font-size: 13px; color: #444; box-sizing: border-box; display: block; min-height: 50px; }
-        .copy-btn-inner { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #ccc; border-radius: 6px; padding: 6px 8px; cursor: pointer; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        #welcome-toast { display: none; position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 20px; border-radius: 10px; font-size: 12px; z-index: 3000; text-align: center; width: 80%; }
+        .copy-box { width: 100%; border: none; background: transparent; padding: 15px 45px 15px 15px; font-family: inherit; font-size: 13px; color: #444; box-sizing: border-box; display: block; min-height: 80px; resize: none; }
+        .copy-btn-inner { position: absolute; right: 8px; top: 10px; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 6px 8px; cursor: pointer; }
 
         @media (max-width: 850px) {
-            .sidebar { position: absolute; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); width: 280px; }
-            .sidebar.closed { transform: translateX(-100%); }
+            .sidebar { position: fixed; left: 0; top: 58px; height: calc(100vh - 58px); transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+            .sidebar.closed { transform: translateX(-100%); width: 280px; }
+            .month-view { padding: 10px; }
         }
     </style>
 </head>
@@ -87,7 +83,7 @@
     <div class="header-left">
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
         <h1 class="app-title">Platos</h1>
-        <span class="version-tag">v8.0</span>
+        <span class="version-tag">v8.5</span>
     </div>
     <div class="header-btns">
         <button class="btn btn-magic" onclick="autoFillMonth()">✨ Sugerir</button>
@@ -98,7 +94,7 @@
 </header>
 
 <div class="main-container">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar closed" id="sidebar">
         <div class="sidebar-tabs">
             <button class="tab-btn active" id="tab-alm" onclick="switchTab('alm')">Almuerzos</button>
             <button class="tab-btn" id="tab-cena" onclick="switchTab('cena')">Cenas</button>
@@ -115,10 +111,10 @@
 </div>
 
 <div id="plateModal" class="modal"><div class="modal-content">
-    <h3 id="modalTitle" style="margin:0 0 10px 0">Plato</h3>
+    <h3 style="margin:0 0 10px 0">Configurar Plato</h3>
     <input type="hidden" id="mType"><input type="hidden" id="mIndex">
     <input type="text" id="mName" placeholder="Nombre..." style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-    <textarea id="mIng" placeholder="Ingredientes..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
+    <textarea id="mIng" placeholder="Ingredientes (separados por comas)..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
     <div style="display:flex; gap:10px; margin-top:10px;">
         <button class="btn" style="flex:1; background:var(--alm-color); padding:14px; font-size:14px;" onclick="savePlate()">Guardar</button>
         <button class="btn" style="flex:1; background:#95a5a6; padding:14px; font-size:14px;" onclick="closeModal('plateModal')">Cancelar</button>
@@ -219,13 +215,18 @@
     }
 
     function clearSlot(slotId) { document.getElementById(slotId).innerHTML = ''; delete calendarState[slotId]; autoSave(); }
+    
     function loadCalendar() {
         for (let s in calendarState) {
             const d = calendarState[s];
             if(repoData[d.type] && repoData[d.type][d.index]) setSlot(s, d.type, d.index);
         }
     }
-    function autoSave() { localStorage.setItem('kp_repo_v8', JSON.stringify(repoData)); localStorage.setItem('kp_cal_v8', JSON.stringify(calendarState)); }
+
+    function autoSave() { 
+        localStorage.setItem('kp_repo_v8', JSON.stringify(repoData)); 
+        localStorage.setItem('kp_cal_v8', JSON.stringify(calendarState)); 
+    }
 
     function autoFillMonth() {
         for(let w=1; w<=3; w++) {
@@ -240,8 +241,13 @@
 
     function openPlateModal(t, i = -1) {
         document.getElementById('mType').value = t; document.getElementById('mIndex').value = i;
-        if(i > -1) { document.getElementById('mName').value = repoData[t][i].n; document.getElementById('mIng').value = repoData[t][i].i; }
-        else { document.getElementById('mName').value = ''; document.getElementById('mIng').value = ''; }
+        if(i > -1) { 
+            document.getElementById('mName').value = repoData[t][i].n; 
+            document.getElementById('mIng').value = repoData[t][i].i; 
+        } else { 
+            document.getElementById('mName').value = ''; 
+            document.getElementById('mIng').value = ''; 
+        }
         document.getElementById('plateModal').style.display = 'flex';
     }
 
@@ -260,23 +266,27 @@
         let ings = new Set();
         for(let id in calendarState) {
             const d = calendarState[id];
-            if(repoData[d.type][d.index].i) repoData[d.type][d.index].i.split(',').forEach(x => ings.add(x.trim()));
+            if(repoData[d.type] && repoData[d.type][d.index].i) {
+                repoData[d.type][d.index].i.split(',').forEach(x => ings.add(x.trim()));
+            }
         }
-        showMsg("🛒 Lista de la Compra", "Copia estos ingredientes en tu aplicación de notas.", Array.from(ings).map(x => `- ${x}`).join('\n') || "Calendario vacío.");
+        const listText = Array.from(ings).map(x => `- ${x}`).join('\n') || "Añade platos al calendario primero.";
+        showMsg("🛒 Lista de la Compra", "Ingredientes necesarios para tu menú actual:", listText);
     }
 
     function exportCode() {
-        const code = btoa(unescape(encodeURIComponent(JSON.stringify({repo: repoData, cal: calendarState}))));
-        showMsg("💾 Guardar y Compartir", "Copia este código para recuperar tu menú en otro dispositivo o pasárselo a quien quieras.", code);
+        const data = {repo: repoData, cal: calendarState};
+        const code = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+        showMsg("💾 Guardar y Compartir", "Copia este código para pasárselo a quien quieras o guardar una copia externa.", code);
     }
 
     function importCode() {
-        const code = prompt("Pega el código de recuperación:");
+        const code = prompt("Pega aquí el código de recuperación:");
         if(code) {
             try {
                 const data = JSON.parse(decodeURIComponent(escape(atob(code))));
                 repoData = data.repo; calendarState = data.cal; autoSave(); location.reload();
-            } catch(e) { alert("Código inválido"); }
+            } catch(e) { alert("Error: Código no válido"); }
         }
     }
 
@@ -290,8 +300,9 @@
     function copyResult() {
         const input = document.getElementById('msgInput');
         input.select();
+        input.setSelectionRange(0, 99999);
         document.execCommand('copy');
-        alert("¡Copiado al portapapeles!");
+        alert("¡Copiado!");
     }
 
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
