@@ -7,7 +7,6 @@
     <style>
         :root { --alm-color: #4caf50; --cena-color: #5c6bc0; --bg: #f4f7f6; --primary: #2c3e50; --accent: #8e44ad; --text: #333; --light-gray: #f8f9fa; }
         
-        /* Corregido el scroll general */
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-y: auto; font-size: 14px; }
         
         header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
@@ -25,7 +24,7 @@
 
         .main-container { display: flex; flex: 1; position: relative; min-height: 0; }
 
-        /* SIDEBAR PRO - Ajustado para móvil y escritorio */
+        /* SIDEBAR - Abierto por defecto */
         .sidebar { width: 280px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; position: sticky; top: 58px; height: calc(100vh - 58px); transition: all 0.3s ease; z-index: 1050; }
         .sidebar.closed { width: 0; overflow: hidden; border: none; }
         
@@ -46,7 +45,7 @@
         .btn-add-alm { color: var(--alm-color); }
         .btn-add-cena { color: var(--cena-color); }
 
-        /* CALENDARIO - Scroll vertical libre */
+        /* CALENDARIO */
         .month-view { flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
         .week-container { background: white; border-radius: 14px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .week-header { padding: 10px 15px; background: #f8f9fa; font-weight: bold; font-size: 13px; border-bottom: 1px solid #eee; }
@@ -71,19 +70,16 @@
             .sidebar { position: fixed; left: 0; top: 58px; height: calc(100vh - 58px); transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
             .sidebar.closed { transform: translateX(-100%); width: 280px; }
-            .month-view { padding: 10px; }
         }
     </style>
 </head>
 <body>
 
-<div id="welcome-toast">✅ Se han cargado platos por defecto. Edítalos, elimínalos o añade los tuyos.</div>
-
 <header>
     <div class="header-left">
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
         <h1 class="app-title">Platos</h1>
-        <span class="version-tag">v8.5</span>
+        <span class="version-tag">v9.0</span>
     </div>
     <div class="header-btns">
         <button class="btn btn-magic" onclick="autoFillMonth()">✨ Sugerir</button>
@@ -94,7 +90,7 @@
 </header>
 
 <div class="main-container">
-    <aside class="sidebar closed" id="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-tabs">
             <button class="tab-btn active" id="tab-alm" onclick="switchTab('alm')">Almuerzos</button>
             <button class="tab-btn" id="tab-cena" onclick="switchTab('cena')">Cenas</button>
@@ -110,11 +106,20 @@
     <main class="month-view" id="month-view"></main>
 </div>
 
+<div id="welcomeModal" class="modal" style="display: flex;">
+    <div class="modal-content" style="text-align: center;">
+        <div style="font-size: 40px; margin-bottom: 10px;">👋</div>
+        <h3 style="margin-top: 0;">¡Bienvenido!</h3>
+        <p style="color: #666; line-height: 1.5;">Se han cargado platos por defecto para ayudarte a empezar. <br><br><strong>Puedes editarlos, eliminarlos o añadir los tuyos propios</strong> desde el menú lateral.</p>
+        <button class="btn" style="background: var(--primary); width: 100%; padding: 15px; font-size: 14px; margin-top: 10px;" onclick="closeModal('welcomeModal')">¡Entendido!</button>
+    </div>
+</div>
+
 <div id="plateModal" class="modal"><div class="modal-content">
     <h3 style="margin:0 0 10px 0">Configurar Plato</h3>
     <input type="hidden" id="mType"><input type="hidden" id="mIndex">
     <input type="text" id="mName" placeholder="Nombre..." style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-    <textarea id="mIng" placeholder="Ingredientes (separados por comas)..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
+    <textarea id="mIng" placeholder="Ingredientes..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
     <div style="display:flex; gap:10px; margin-top:10px;">
         <button class="btn" style="flex:1; background:var(--alm-color); padding:14px; font-size:14px;" onclick="savePlate()">Guardar</button>
         <button class="btn" style="flex:1; background:#95a5a6; padding:14px; font-size:14px;" onclick="closeModal('plateModal')">Cancelar</button>
@@ -149,28 +154,33 @@
         ]
     };
 
-    let repoData = JSON.parse(localStorage.getItem('kp_repo_v8')) || fullSeasonalRepo;
-    let calendarState = JSON.parse(localStorage.getItem('kp_cal_v8')) || {};
+    let repoData = JSON.parse(localStorage.getItem('kp_repo_v9')) || fullSeasonalRepo;
+    let calendarState = JSON.parse(localStorage.getItem('kp_cal_v9')) || {};
     let currentTab = 'alm';
 
     window.onload = () => {
-        if(!localStorage.getItem('kp_repo_v8')) {
-            document.getElementById('welcome-toast').style.display = 'block';
-            setTimeout(() => document.getElementById('welcome-toast').style.display = 'none', 5000);
+        // Solo mostrar bienvenida si es la primera vez (no hay datos guardados)
+        if(localStorage.getItem('kp_repo_v9')) {
+            document.getElementById('welcomeModal').style.display = 'none';
         }
+        
+        // Ajustar sidebar según ancho de pantalla al cargar
+        const sb = document.getElementById('sidebar');
+        if(window.innerWidth <= 850) {
+            sb.classList.add('closed');
+        } else {
+            sb.classList.remove('closed');
+        }
+
         renderRepo(); initMonth(); loadCalendar();
     };
 
-    function initMonth() {
-        const view = document.getElementById('month-view'); view.innerHTML = '';
-        for (let w = 1; w <= 3; w++) {
-            let html = `<div class="week-container"><div class="week-header">SEMANA ${w}</div><div class="week-grid-wrapper"><div class="week-grid">`;
-            for(let d=0; d<7; d++) {
-                html += `<div class="day-box"><div class="day-label">${['LUN','MAR','MIE','JUE','VIE','SAB','DOM'][d]}</div>
-                <div class="slot alm-slot" id="w${w}d${d}alm" data-label="ALMUERZO" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div>
-                <div class="slot cena-slot" id="w${w}d${d}cena" data-label="CENA" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div></div>`;
-            }
-            view.insertAdjacentHTML('beforeend', html + `</div></div></div>`);
+    function toggleSidebar() { 
+        const sb = document.getElementById('sidebar');
+        if(window.innerWidth <= 850) {
+            sb.classList.toggle('open');
+        } else {
+            sb.classList.toggle('closed');
         }
     }
 
@@ -186,10 +196,17 @@
         });
     }
 
-    function toggleSidebar() { 
-        const sb = document.getElementById('sidebar');
-        sb.classList.toggle('closed');
-        sb.classList.toggle('open');
+    function initMonth() {
+        const view = document.getElementById('month-view'); view.innerHTML = '';
+        for (let w = 1; w <= 3; w++) {
+            let html = `<div class="week-container"><div class="week-header">SEMANA ${w}</div><div class="week-grid-wrapper"><div class="week-grid">`;
+            for(let d=0; d<7; d++) {
+                html += `<div class="day-box"><div class="day-label">${['LUN','MAR','MIE','JUE','VIE','SAB','DOM'][d]}</div>
+                <div class="slot alm-slot" id="w${w}d${d}alm" data-label="ALMUERZO" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div>
+                <div class="slot cena-slot" id="w${w}d${d}cena" data-label="CENA" ondrop="drop(event)" ondragover="e=>e.preventDefault()"></div></div>`;
+            }
+            view.insertAdjacentHTML('beforeend', html + `</div></div></div>`);
+        }
     }
 
     function switchTab(t) { 
@@ -224,8 +241,8 @@
     }
 
     function autoSave() { 
-        localStorage.setItem('kp_repo_v8', JSON.stringify(repoData)); 
-        localStorage.setItem('kp_cal_v8', JSON.stringify(calendarState)); 
+        localStorage.setItem('kp_repo_v9', JSON.stringify(repoData)); 
+        localStorage.setItem('kp_cal_v9', JSON.stringify(calendarState)); 
     }
 
     function autoFillMonth() {
@@ -277,7 +294,7 @@
     function exportCode() {
         const data = {repo: repoData, cal: calendarState};
         const code = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-        showMsg("💾 Guardar y Compartir", "Copia este código para pasárselo a quien quieras o guardar una copia externa.", code);
+        showMsg("💾 Guardar y Compartir", "Copia este código para pasárselo a quien quieras.", code);
     }
 
     function importCode() {
@@ -300,7 +317,6 @@
     function copyResult() {
         const input = document.getElementById('msgInput');
         input.select();
-        input.setSelectionRange(0, 99999);
         document.execCommand('copy');
         alert("¡Copiado!");
     }
